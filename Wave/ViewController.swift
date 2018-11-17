@@ -25,6 +25,8 @@ class ViewController: UIViewController {
 
     private let encoder = JSONEncoder()
 
+    private var gotInitalOffset = false
+
     // MARK: - View Life Cycle
 
     override func viewDidLoad() {
@@ -111,11 +113,11 @@ class ViewController: UIViewController {
                 received(update)
             case .ended:
                 let newCenter = gestureRecognizer.location(in: sharedView)
-                let decelerationRate: CGFloat = UIScrollView.DecelerationRate.fast.rawValue
+                let decelerationRate: CGFloat = UIScrollView.DecelerationRate.normal.rawValue
                 let xDistance = (gestureRecognizer.velocity(in: sharedView).x / 1000.0)
-                    * decelerationRate / (1.0 - decelerationRate)
+                    * decelerationRate / (1.0 - decelerationRate) / 2
                 let yDistance = (gestureRecognizer.velocity(in: sharedView).y / 1000.0)
-                    * decelerationRate / (1.0 - decelerationRate)
+                    * decelerationRate / (1.0 - decelerationRate) / 2
 
                 let update = WaveViewStateUpdate(state: .thrown,
                                                  center: CGPoint(x: newCenter.x + xDistance,
@@ -193,8 +195,10 @@ class ViewController: UIViewController {
                                                   peerID: sender)
                 handleNewDevice(device: device)
             case .sharedViewOrigin:
+                guard !gotInitalOffset else { return }
                 let point = try JSONDecoder().decode(CGPoint.self, from: object.data)
                 sharedView.frame.origin = point
+                gotInitalOffset = true
             }
         } catch {
             print(error)
