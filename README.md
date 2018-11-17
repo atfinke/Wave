@@ -1,2 +1,3 @@
+#### DTR F18 Hackathon
 # Wave
-DTR F18 Hackathon
+Combine multiple iOS devices to form a single continuous screen.
